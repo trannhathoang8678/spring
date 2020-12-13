@@ -35,42 +35,45 @@ public class Prime {
             }
     }
 
-    public synchronized boolean calResult() {
-        try  {
+    public void updateResult(int number) {
+        if (number == -1) return;
+        int presentResult = number;
+        int numberDivisors = 1;
+        for (int prime : primeList) {
+            if (prime > number) break;
+            int exponent = 1;
+            while (number % prime == 0) {
+                number /= prime;
+                exponent++;
+            }
+            numberDivisors *= exponent;
+        }
+        if (numberDivisors > maxDivisors) {
+            maxDivisors = numberDivisors;
+            result = presentResult;
+        }
+    }
+
+    public synchronized int getNumber() {
+        try {
             int number = numbers.element();
-            int presentResult=number;
             numbers.remove();
-            int numberDivisors = 1;
-            for (int prime : primeList) {
-                if (prime > number) break;
-                int exponent = 1;
-                while (number % prime == 0) {
-                    number /= prime;
-                    exponent++;
-                    //     System.out.println(exponent + " " + number + " " + prime);
-                    //System.out.println(prime);
-                }
-                numberDivisors *= exponent;
-            }
-            if (numberDivisors > maxDivisors) {
-                maxDivisors = numberDivisors;
-                result = presentResult;
-            }
+            return number;
+
         } catch (Exception e) {
-            return false;
+            return -1;
         }
-        return true;
+
     }
 
-    public synchronized void printResult() {
-        if(result!=0)
-        {
+    public void printResult() {
+        if (result != 0) {
             System.out.println(result + " " + maxDivisors);
-            result=0;
+            result = 0;
         }
     }
 
-    public  int getResult() {
+    public int getResult() {
         return result;
     }
 
