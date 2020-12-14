@@ -1,17 +1,18 @@
 package lesson1.activity16;
 
+
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Prime {
-    private Queue<Integer> numbers = new LinkedList<>();
+    private Queue<Integer> numbers = new LinkedBlockingDeque<>();
     private LinkedList<Integer> primeList = new LinkedList<>();
     private int result = 0, maxDivisors = 0;
     private static Prime prime = new Prime();
 
     private Prime() {
     }
-
 
     public static Prime getPrime() {
         return prime;
@@ -35,35 +36,35 @@ public class Prime {
             }
     }
 
-    public void updateResult(int number) {
-        if (number == -1) return;
-        int presentResult = number;
-        int numberDivisors = 1;
-        for (int prime : primeList) {
-            if (prime > number) break;
-            int exponent = 1;
-            while (number % prime == 0) {
-                number /= prime;
-                exponent++;
-            }
-            numberDivisors *= exponent;
-        }
+    public synchronized boolean updateResult(int presentResult, int numberDivisors) {
+        if (presentResult == -1) return false;
+
         if (numberDivisors > maxDivisors) {
             maxDivisors = numberDivisors;
             result = presentResult;
         }
+        return true;
     }
 
-    public synchronized int getNumber() {
+    public Pair getNumberAndCal() {
         try {
             int number = numbers.element();
             numbers.remove();
-            return number;
-
+            int presentResult = number;
+            int numberDivisors = 1;
+            for (int prime : primeList) {
+                if (prime > number) break;
+                int exponent = 1;
+                while (number % prime == 0) {
+                    number /= prime;
+                    exponent++;
+                }
+                numberDivisors *= exponent;
+            }
+            return new Pair(presentResult, numberDivisors);
         } catch (Exception e) {
-            return -1;
+            return new Pair(-1, -1);
         }
-
     }
 
     public void printResult() {
@@ -71,14 +72,6 @@ public class Prime {
             System.out.println(result + " " + maxDivisors);
             result = 0;
         }
-    }
-
-    public int getResult() {
-        return result;
-    }
-
-    public int getMaxDivisors() {
-        return maxDivisors;
     }
 }
 

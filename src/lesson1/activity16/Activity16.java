@@ -1,6 +1,6 @@
 package lesson1.activity16;
 
-import java.util.LinkedList;
+
 
 public class Activity16 {
 
@@ -12,7 +12,7 @@ public class Activity16 {
         ThreadCal threadCal2 = new ThreadCal();
 
         threadCal1.start();
-        threadCal2.start();
+     //   threadCal2.start();
 
     }
 }
@@ -22,9 +22,9 @@ class ThreadCal extends Thread {
     public void run() {
         long currentTime = System.currentTimeMillis();
         while (true) {
-            int number = Prime.getPrime().getNumber();
-            if (number == -1) break;
-            Prime.getPrime().updateResult(number);
+            Pair result= Prime.getPrime().getNumberAndCal();
+            if(!Prime.getPrime().updateResult(result.first,result.second))
+                break;
         }
         Prime.getPrime().printResult();
         System.out.println(System.currentTimeMillis() - currentTime);
